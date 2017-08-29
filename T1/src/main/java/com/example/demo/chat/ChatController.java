@@ -45,6 +45,8 @@ public class ChatController {
 		System.out.println(message.getContents());
 		System.out.println(message.getSendDate());
 		System.out.println(message.getUser_nicname());
+		System.out.println(message.getProfileimg());
+
 		System.out.println("~~~~~~~~~~~~~~~~~");
 
 		HashMap<String,String> input = new HashMap<>();
@@ -52,6 +54,7 @@ public class ChatController {
 		input.put("contents", message.getContents());
 		input.put("date", message.getSendDate());
 		input.put("roomid", message.getRoomid());
+		input.put("profileimg", message.getProfileimg());
 		
 		chattingDao.saveChat(input);
 		

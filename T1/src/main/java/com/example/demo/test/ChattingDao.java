@@ -85,6 +85,12 @@ public class ChattingDao {
 	}
 
 
+	public List<HashMap<String, String>> retrieveProfileImgInRoom(HashMap<String, String> input) {
+		// TODO Auto-generated method stub
+		return this.sqlSession.selectList("retrieveProfileImgInRoom",input);
+	}
+
+
 
 
 

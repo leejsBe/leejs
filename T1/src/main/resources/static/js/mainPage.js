@@ -61,7 +61,7 @@ function setNotReadMsgNum(num){
 	}
 }
 
-var t ;
+var q;
 var banner;
 $(function() {
 	
@@ -180,7 +180,19 @@ $(function() {
 	})
 	
 	bannerChange();
-	
 	connect();
+	
+	
+	$('#main_menu_list li').click(function(e){
+		
+		if($(this).index() == 2){
+			
+			window.open("about:blank","ADDFRIEND","height=400, width=400, location=no, menubar=no, scrollbars=yes,"+
+						"resizable=no, toolbar=no, status=no, left="+(window.screenX + window.outerWidth/2  - 200)+", top="+(window.screenY + window.outerHeight/2 - 220));
+
+			
+		}
+	})
+	
 });
 

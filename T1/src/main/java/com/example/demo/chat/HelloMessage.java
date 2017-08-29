@@ -14,4 +14,5 @@ public class HelloMessage {
 	private String sendDate;
 	private String roomid;
 	private String user_nicname;
+	private String profileimg;
 }

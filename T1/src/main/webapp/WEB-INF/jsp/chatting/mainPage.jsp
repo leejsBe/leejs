@@ -239,31 +239,31 @@ However, delay the fade out process for 2.5 seconds */
 	
 	
 	<ul id="main_menu_list" class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" style="width: 135px; margin: 0;padding: 0; border-width: 1px; outline: 1px;" for="main_menu">
-	  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 		 <img alt="" src="/img/new_chatting.png" style="display: inline-block; margin-left: 10px;"> <div style="color: #262626; font-weight: bold; font-size: 12px; display: inline-block;">새로운 채팅</div>
 	  </li>
-	  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <img alt="" src="/img/open_chatting.png" style="display: inline-block; margin-left: 10px;"> <div style="color: #262626; font-weight: bold; font-size: 12px; display: inline-block;">오픈 채팅</div>
 	  </li>
-	  <li class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; margin-top:3px; font-size: 12px; display: inline-block;">친구 추가</div>
 	  </li>
-	  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; font-size: 12px; display: inline-block;">그룹 만들기</div>
 	  </li>
-	  <li class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; margin-top:3px; font-size: 12px; display: inline-block;">카카오톡 정보</div>
 	  </li>
-	  <li class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item mdl-menu__item--full-bleed-divider" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; font-size: 12px; display: inline-block;">설정</div>
 	  </li>
-	  <li class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; margin-top:3px; font-size: 12px; display: inline-block;">잠금모드 설정</div>
 	  </li>
-	  <li class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; margin-top:3px; font-size: 12px; display: inline-block;">로그아웃</div>
 	  </li>
-	  <li class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
+	  <li id = "" class="mdl-menu__item" style="line-height: 30px; vertical-align: middle; margin:0; padding: 0;">
 	 	 <div style="color: #262626; margin-left:32px; margin-top:1px; font-size: 12px; display: inline-block;">종료</div>
 	  </li>
 	</ul>

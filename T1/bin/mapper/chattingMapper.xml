@@ -64,7 +64,8 @@
 			   TO_CHAR(A.REG_DATE,'yyyy-mm-dd AM hh24:mi:ss') AS "sendDate",
 			   (SELECT USER_NICNAME FROM CHATUSER B WHERE B.USERID = A.USERID)  AS "user_nicname",
 			   A.ROOMID as "roomid",
-			   A.CONTENTS AS "contents"
+			   A.CONTENTS AS "contents", 
+			   (SELECT MY_PROFILE_IMG_URL FROM CHATUSER WHERE USERID = A.USERID) AS "profileimg"
 		  FROM CHAT A
 		 WHERE ROOMID= #{roomid} 
 	  ORDER BY REG_DATE
@@ -265,5 +266,15 @@
 		   AND ROOMID = #{roomid}
 		
 	</update>	
+	
+	<select id="retrieveProfileImgInRoom" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT A.MY_PROFILE_IMG_URL AS PROFILE_IMG,
+			   A.USERID 
+		  FROM CHATUSER A, (SELECT distinct userid FROM userroom where roomid = #{roomid}) B
+		 WHERE A.USERID = B.USERID
+				 
+	</select>
+	
 	
 </mapper>

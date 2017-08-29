@@ -59,12 +59,13 @@ function sendHello(){
 	document.getElementById('disconnect').disabled= false;
 }
 
-function sendDetail(roomid,user_nicname){
+function sendDetail(roomid,user_nicname,userProfileImg){
 	stompClient.send("/detail",{},JSON.stringify({
 		userid:$('#name').val(),
 		contents:$('#btn-input').val(),
 		roomid:roomid,
-		user_nicname:user_nicname
+		user_nicname:user_nicname,
+		profileimg:userProfileImg
 	}));
 }
 
@@ -75,8 +76,9 @@ function sendBye() {
 	document.getElementById('disconnect').disabled= true;
 }
 
-
+var t;
 function showDetail(message) {
+	t = message;
 	var html = "";
 	var yyyyMMdd = (message.sendDate).split(' ')[0];
 	var AM = (message.sendDate).split(' ')[1];
@@ -85,7 +87,7 @@ function showDetail(message) {
 	var timeheight = 1;
 	if((message.contents).indexOf("\n") > -1){
 		timeheight = (message.contents).match(/\n/g).length+1.2;
-	}
+	} 
 	
 	if(message.userid == $('#name').val()){  /// 내가 보내는 메시지 
 		html += '<li class="left clearfix">';
@@ -98,15 +100,15 @@ function showDetail(message) {
 		html += '</li>';
 	} else {  							/// 상대방이 보내는 메시지
 		html += '<li class="left clearfix">';
-		html += '	<span class="chat-img pull-left">'
-		html += '		<img src="http://placehold.it/50/55C1E7/fff" alt="User Avatar" class="img-circle">';
+		html += '	<span class="chat-img pull-left img-circle" style="width: 40px; height: 40px; overflow: hidden;">'
+		html += '		<img src="'+message.profileimg+'" style="margin-left: 50%; margin-top:50%; transform:translateX(-50%) translateY(-50%);">';
 		html += '	</span>';
-		html += '	<div class="chat-body clearfix">';
+		html += '	<div class="chat-body clearfix" style="margin-left:35px;">';
 		html += '		<div class="header">';
-		html += '		<strong class="primary-font" style="margin-left:8px;">' + message.user_nicname + '</strong>';
+		html += '		<div class="primary-font" style="margin-left:9px; font-size:12px;">' + message.user_nicname + '</div>';
 
 		html += '	</div>';
-		html += 	'<div style="box-shadow:1px 1px 1px #88A3B7; margin-left:5px; float:left; font-size:13px; padding: 5px 5px 5px 5px; border-radius:3px; background-color:rgb(255,255,255);">' +(message.contents).replace(/\n/gi,"</br>") +'</div>';
+		html += 	'<div style="box-shadow:1px 1px 1px #88A3B7; margin-top: 5px; margin-left:5px; float:left; font-size:13px; padding: 5px 5px 5px 5px; border-radius:3px; background-color:rgb(255,255,255);">' +(message.contents).replace(/\n/gi,"</br>") +'</div>';
 		html += '		<div style="margin-top:'+17*timeheight+'px;"><small class="text-muted" style="font-size:10px;  margin-left:5px;">';
 		html += '			<i class="fa fa-clock-o fa-fw"></i>' + '<div style="display:inline-block;" title="'+ yyyyMMdd.split("-")[0]+'년 '+yyyyMMdd.split("-")[1]+'월 '+yyyyMMdd.split("-")[2]+'일 '+'">'+AM+' '+ HHmiss.split(":")[0] +':'+HHmiss.split(":")[1] + '</div>';
 		html += '		</small></div>';
@@ -215,6 +217,7 @@ function leadingZeros(n, digits) {
 
 var userid;
 var roomid;
+var profileImgInRoom;
 $(function() {
 	
 		
@@ -245,6 +248,17 @@ $(function() {
 		}
 	})
 	
+	///유저별 프로필 이미지
+	$.ajax({
+		url:'/test/retrieveProfileImgInRoom',
+		type:'post',
+		data:{"roomid":roomid},
+		success:function(data){
+			profileImgInRoom = eval(data);
+			console.log(profileImgInRoom)
+		}
+	})
+	
 	
 	
 	$("form").on('submit', function(e) {
@@ -266,8 +280,15 @@ $(function() {
 		try{
 			
 			divChatByDate(getTimeStamp().split(" ")[0])
+			
+			var userProfileImg;
+			for(var i = 0 ; i < profileImgInRoom.length ; i++){
+				if(profileImgInRoom[i].USERID == userid){
+					userProfileImg =  profileImgInRoom[i].PROFILE_IMG;
+				}
+			}
 			// 메시지 전달
-			sendDetail(roomid,user_nicname);
+			sendDetail(roomid,user_nicname,userProfileImg);
 			$('#btn-input').val('');
 			document.getElementById('btn-chat').disabled = true;
 		}catch(err){

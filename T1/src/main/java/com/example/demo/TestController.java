@@ -294,14 +294,27 @@ public class TestController {
 		HashMap<String,String> input = new HashMap<>();
 		input.put("roomid",roomid);
 		input.put("userid",userid);
-		System.out.println(roomid);
-		System.out.println(userid);
 		
 		///메시지 읽었다고 업데이트
 		chattingDao.chkReadUpdate(input);
-		
+		 
 		
 		return "";
+	}	
+	
+	@RequestMapping("/retrieveProfileImgInRoom")
+	@ResponseBody
+	public String retrieveProfileImgInRoom(String roomid) throws Exception{
+		HashMap<String,String> input = new HashMap<>();
+		input.put("roomid",roomid);
+		
+		///메시지 읽었다고 업데이트
+		List<HashMap<String, String>> profileImg = chattingDao.retrieveProfileImgInRoom(input);		 
+		
+		Gson gson = new Gson();
+		String jsonPlace = gson.toJson(profileImg);
+		
+		return jsonPlace;
 	}	
 	
 }

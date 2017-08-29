@@ -36,7 +36,7 @@ public class TestController {
 
 	@Autowired
 	private MemberRepository memberDao;
-	
+	  
 	
 	@ResponseBody
 	@RequestMapping("/test")

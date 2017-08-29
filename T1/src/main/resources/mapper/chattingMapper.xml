@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.test.ChattingDao">
+	<select id="chkidpwd" parameterType="hashmap" resultType="hashmap">
+	
+		SELECT USERID AS USERID,
+			   USER_NICNAME AS USER_NICNAME,
+			   USER_EMAIL AS USER_EMAIL,
+			   NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG
+		  FROM CHATUSER 
+		 WHERE USERID = #{userid} AND PASSWORD = #{password}
+	
+	</select>
+
+	<select id="roomList" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT ROOMID,
+			   LASTTIME,
+			   LASTCONTENTS, 
+			   USERINROOM,
+		<![CDATA[
+			   (SELECT COUNT(*)
+			   	  FROM CHAT F
+			   	 WHERE F.ROOMID = E.ROOMID 
+			   	   AND (SELECT LASTREADDATE 
+			   	          FROM CHKREADMSG 
+			   	         WHERE ROOMID = E.ROOMID 
+			   	           AND USERID = #{userid}) < REG_DATE
+			   	           AND F.USERID != #{userid}) AS BADGE, 
+		]]>
+			   (SELECT MY_PROFILE_IMG_URL FROM CHATUSER WHERE USERID = (SELECT USERID FROM USERROOM WHERE ROOMID = E.ROOMID AND USERID != #{userid} AND ROWNUM = 1)) AS PROFILE_IMG 
+		  FROM (SELECT A.ROOMID,
+					   CASE 
+					   		GREATEST(TO_DATE(TO_CHAR(SYSDATE,'yymmdd'),'yymmdd') - TO_DATE(TO_CHAR((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'yymmdd'),'yymmdd'),0)
+					   WHEN 0
+					   THEN TO_CHAR((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'AM HH24:MI')
+					   WHEN 1
+					   THEN '어제'
+					   ELSE TO_CHAR((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'YYYY-MM-DD')
+					   END AS LASTTIME,
+		       		   (SELECT B.CONTENTS 
+		       		      FROM CHAT B 
+		       		     WHERE B.REG_DATE=(SELECT MAX(REG_DATE) FROM CHAT WHERE ROOMID = B.ROOMID)  
+		       		       AND A.ROOMID=B.ROOMID) AS LASTCONTENTS,
+		               (SELECT LISTAGG((SELECT USER_NICNAME FROM CHATUSER D WHERE D.USERID = C.USERID AND D.USERID != #{userid}),',') WITHIN GROUP (ORDER BY ROOMID) 
+		               	  FROM USERROOM C WHERE C.ROOMID=A.ROOMID GROUP BY ROOMID) AS USERINROOM    
+				  FROM ROOM A 
+				 WHERE A.ROOMID = ANY(SELECT DISTINCT ROOMID from USERROOM where USERID=#{userid})) E 
+		 WHERE 1=1
+		   AND LASTTIME IS NOT NULL
+			<if test = "search != null">
+				AND USERINROOM LIKE '%'||#{search}||'%'
+				
+			</if>
+	  ORDER BY LASTTIME DESC
+	 
+	</select>
+	
+	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
+		
+		
+		SELECT A.USERID as "userid",
+			   TO_CHAR(A.REG_DATE,'yyyy-mm-dd AM hh24:mi:ss') AS "sendDate",
+			   (SELECT USER_NICNAME FROM CHATUSER B WHERE B.USERID = A.USERID)  AS "user_nicname",
+			   A.ROOMID as "roomid",
+			   A.CONTENTS AS "contents"
+		  FROM CHAT A
+		 WHERE ROOMID= #{roomid} 
+	  ORDER BY REG_DATE
+	
+	</select>
+	
+	<insert id="saveChat" parameterType="hashmap">
+	
+		INSERT INTO CHAT
+		(
+			ROOMID,
+			USERID,
+			CONTENTS,
+			REG_DATE
+		)
+		VALUES
+		(
+			${roomid},
+			#{userid},
+			#{contents},
+			CURRENT_TIMESTAMP
+		)
+	
+	</insert>
+	
+	<select id="friendList" parameterType="hashmap" resultType="hashmap">
+		
+		<if test = "search == null || search == ''">
+		
+		SELECT '0' AS SEQ,
+			   '---' AS USERID,
+			   '' AS FRNDID,
+		       '---' AS FRND_NICNAME,
+		       '---' AS STATUS_MSG,
+		       '' AS PROFILE_IMG,
+		       CURRENT_TIMESTAMP AS REG_DATE,
+		       0 AS FRND_COUNT
+		  FROM DUAL 
+
+		 UNION ALL				
+
+		SELECT '0' AS SEQ,
+		       USERID,
+		       '' AS FRNDID,
+		       USER_NICNAME,
+		       STATUS_MSG,
+		       NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
+		       REG_DATE,
+		       0 AS FRND_COUNT
+		  FROM CHATUSER
+		 WHERE USERID= #{userid} 
+		 
+		 UNION ALL				
+				
+				
+		</if>
+		
+
+		SELECT '2' AS SEQ,
+			   '---' AS USERID,
+			   '' AS FRNDID,
+		       '---' AS FRND_NICNAME,
+		       '---' AS STATUS_MSG,
+		       '' AS PROFILE_IMG,
+		       CURRENT_TIMESTAMP AS REG_DATE,
+		       COUNT(FRNDID) AS FRND_COUNT
+		  FROM FRIENDLIST 
+         WHERE USERID = #{userid} 
+         
+		<if test = "search != null">
+		   AND (SELECT USER_NICNAME FROM CHATUSER WHERE USERID = FRNDID) LIKE '%'||#{search}||'%'
+		</if> 
+		
+		 UNION ALL
+		
+		SELECT '2' AS SEQ,
+			   A.USERID,
+			   A.FRNDID,
+			   B.USER_NICNAME AS FRND_NICNAME,
+			   B.STATUS_MSG AS STATUS_MSG,
+			   NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
+			   A.REG_DATE,
+			   0 AS FRND_COUNT
+		  FROM FRIENDLIST A, CHATUSER B
+		 WHERE A.FRNDID = B.USERID
+		   AND A.USERID = #{userid}
+		  
+		<if test = "search != null">
+		   AND (SELECT USER_NICNAME FROM CHATUSER WHERE USERID = FRNDID) LIKE '%'||#{search}||'%'
+		</if> 
+		
+	</select>	
+
+	<select id="FriendRoomIdChk" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT E.CHK AS CHK 
+		  FROM (
+					SELECT 
+					    CASE (SELECT COUNT(*) FROM USERROOM D WHERE D.ROOMID = C.ROOMID) 
+					    WHEN 2 THEN C.ROOMID
+					    ELSE 0
+					    END AS CHK
+					  FROM (
+							SELECT A.ROOMID 
+							  FROM
+								   (SELECT DISTINCT ROOMID FROM USERROOM WHERE USERID=#{userid}) A,
+								   (SELECT DISTINCT ROOMID FROM USERROOM WHERE USERID=#{frndid}) B
+							 WHERE A.ROOMID = ANY(B.ROOMID)
+						   ) C
+			   ) E
+		 WHERE E.CHK NOT IN(0)
+	
+	</select>
+
+	<insert id="createRoom" parameterType="hashmap">
+	
+		INSERT INTO ROOM
+		(
+			ROOMID,
+			USERID,
+			DEL_YN,
+			REG_DATE
+		)
+		VALUES
+		(
+			(SELECT MAX(ROOMID) FROM ROOM)+1,
+			#{userid},
+			'N',
+			CURRENT_TIMESTAMP
+		)
+	
+	</insert>
+	
+	<select id="getRoomId" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT ROOMID 
+		  FROM (
+		  		SELECT ROOMID
+				  FROM ROOM
+				 WHERE USERID = #{userid}
+			   )
+		 WHERE ROWNUM = 1
+				 
+		 
+	
+	</select>	
+	
+	<insert id="createUserRoom" parameterType="hashmap">
+	
+		INSERT INTO USERROOM
+		(
+			USERID,
+			ROOMID,
+			DEL_YN,
+			REG_DATE
+		)
+		VALUES
+		(
+			#{userid},
+			#{roomid},
+			'N',
+			CURRENT_TIMESTAMP
+		)
+		
+	</insert>	
+	
+	<select id="chkExistData" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT COUNT(*) AS COUNT
+		  FROM CHKREADMSG 
+		 WHERE ROOMID=#{roomid}
+		   AND USERID=#{userid}
+				 
+	</select>	
+
+	<insert id="insertReadData" parameterType="hashmap">
+	
+		INSERT INTO CHKREADMSG
+		(
+			ROOMID,
+			USERID,
+			LASTREADDATE
+		)
+		VALUES
+		(
+			#{roomid},
+			#{userid},
+			CURRENT_TIMESTAMP
+		)
+		
+	</insert>
+	
+	<update id="updateReadData" parameterType="hashmap">
+	
+		UPDATE CHKREADMSG 
+		   SET LASTREADDATE = CURRENT_TIMESTAMP 
+		 WHERE USERID = #{userid} 
+		   AND ROOMID = #{roomid}
+		
+	</update>	
+	
+</mapper>

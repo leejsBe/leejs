@@ -160,9 +160,10 @@ public class TestController {
 	
 	@RequestMapping("/entry")
 	public String viewEntry(HttpSession httpSession) {
-		httpSession.setAttribute("ef", "33");
 		return "chatting/entry";
 	}
+	
+	
 	
 	@RequestMapping(value = "/chkidpwd", method=RequestMethod.POST)
 	public String chkidpwd(String userid, String password, HttpSession httpSession) {
@@ -183,6 +184,12 @@ public class TestController {
 	}
 	
 
+	////////mainMenu/////////
+	@RequestMapping("/mainMenuAddFriend")
+	public String mainMenuAddFriend(HttpSession httpSession) {
+		return "mainmenu/addFriend";
+	}
+	////////////////////////
 	
 	
 	@RequestMapping("/retrieveRoomList")

@@ -207,6 +207,19 @@ However, delay the fade out process for 2.5 seconds */
     left: 18px;
     bottom: -20px;
 
+}
+
+.modal{
+	display: none;
+	position: fixed;
+	z-index: 3;
+	left:0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.4);
 } 
 
 </style>
@@ -295,7 +308,17 @@ However, delay the fade out process for 2.5 seconds */
 		</div>
 	</footer>
 
+
+
+	<div id = "mainModal" class = "modal">
+		<!-- <div class = "modal-content" style="margin-bottom:4px;">
+		일반 채팅   
+    		<button id="mkChatModal" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored" style="margin-left:5px; background-Color: #FFFFFF;" onclick="makeChatCommon()">
+			  <img alt="" src="/img/talk.PNG">
+			</button>
+		</div> -->
 	
+	</div>	
 	
 
 </body>

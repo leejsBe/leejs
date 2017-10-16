@@ -7,13 +7,14 @@
 		SELECT USERID AS USERID,
 			   USER_NICNAME AS USER_NICNAME,
 			   USER_EMAIL AS USER_EMAIL,
-			   NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG
+			   IFNULL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG
 		  FROM CHATUSER 
 		 WHERE USERID = #{userid} AND PASSWORD = #{password}
 	
 	</select>
-
-	<select id="roomList" parameterType="hashmap" resultType="hashmap">
+	
+	<!-- Oracle  -->
+	<!-- <select id="roomList" parameterType="hashmap" resultType="hashmap">
 		
 		SELECT ROOMID,
 			   LASTTIME,
@@ -55,13 +56,63 @@
 			</if>
 	  ORDER BY LASTTIME DESC
 	 
+	</select> -->
+	
+	
+	<!-- MySql -->
+	<select id="roomList" parameterType="hashmap" resultType="hashmap">
+		
+		SELECT ROOMID,
+			   LASTTIME,
+			   LASTCONTENTS, 
+			   USERINROOM,
+		<![CDATA[
+			   (SELECT COUNT(*)
+			   	  FROM CHAT F
+			   	 WHERE F.ROOMID = E.ROOMID 
+			   	   AND (SELECT LASTREADDATE 
+			   	          FROM CHKREADMSG 
+			   	         WHERE ROOMID = E.ROOMID 
+			   	           AND USERID = #{userid}) < REG_DATE
+			   	           AND F.USERID != #{userid}) AS BADGE, 
+		]]>
+			   (SELECT MY_PROFILE_IMG_URL FROM CHATUSER WHERE USERID = (SELECT USERID FROM USERROOM WHERE ROOMID = E.ROOMID AND USERID != #{userid} LIMIT 1)) AS PROFILE_IMG 
+		  FROM (SELECT A.ROOMID,
+					   CASE 
+					   		GREATEST(CURDATE() - DATE_FORMAT((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'%Y/%m/%d'),0)
+					   WHEN 0
+					   THEN DATE_FORMAT((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'AM %H:%i')
+					   WHEN 1
+					   THEN '어제'
+					   ELSE DATE_FORMAT((SELECT MAX(REG_DATE) FROM CHAT B WHERE B.ROOMID = A.ROOMID),'%Y-%m-%d')
+					   END AS LASTTIME,
+		       		   (SELECT B.CONTENTS 
+		       		      FROM CHAT B 
+		       		     WHERE B.REG_DATE=(SELECT MAX(REG_DATE) FROM CHAT WHERE ROOMID = B.ROOMID)  
+		       		       AND A.ROOMID=B.ROOMID) AS LASTCONTENTS,
+		               (SELECT GROUP_CONCAT((SELECT USER_NICNAME FROM CHATUSER D WHERE D.USERID = C.USERID AND D.USERID != #{userid}),'') 
+		               	  FROM USERROOM C WHERE C.ROOMID=A.ROOMID GROUP BY ROOMID) AS USERINROOM    
+				  FROM ROOM A 
+				 WHERE A.ROOMID = ANY(SELECT DISTINCT ROOMID from USERROOM where USERID=#{userid})) E 
+		 WHERE 1=1
+		   AND LASTTIME IS NOT NULL
+			<if test = "search != null">
+				AND USERINROOM LIKE '%'||#{search}||'%'
+				
+			</if>
+	  ORDER BY LASTTIME DESC
+	 
 	</select>
 	
-	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
+	
+	
+	
+	<!-- oracle -->
+<!-- 	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
 		
 		
 		SELECT A.USERID as "userid",
-			   TO_CHAR(A.REG_DATE,'yyyy-mm-dd AM hh24:mi:ss') AS "sendDate",
+			   DATE_FORMAT(A.REG_DATE,'yyyy-mm-dd AM hh24:mi:ss') AS "sendDate",
 			   (SELECT USER_NICNAME FROM CHATUSER B WHERE B.USERID = A.USERID)  AS "user_nicname",
 			   A.ROOMID as "roomid",
 			   A.CONTENTS AS "contents", 
@@ -70,7 +121,25 @@
 		 WHERE ROOMID= #{roomid} 
 	  ORDER BY REG_DATE
 	
-	</select>
+	</select> -->
+	
+	
+	<!--MySql  -->
+	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
+		
+		
+		SELECT A.USERID as "userid",
+			   DATE_FORMAT(A.REG_DATE,'%Y-%m-%d %p %H:%i:%s') AS "sendDate",
+			   (SELECT USER_NICNAME FROM CHATUSER B WHERE B.USERID = A.USERID)  AS "user_nicname",
+			   A.ROOMID as "roomid",
+			   A.CONTENTS AS "contents", 
+			   (SELECT MY_PROFILE_IMG_URL FROM CHATUSER WHERE USERID = A.USERID) AS "profileimg"
+		  FROM CHAT A
+		 WHERE ROOMID= #{roomid} 
+	  ORDER BY REG_DATE
+	
+	</select>	
+	
 	
 	<insert id="saveChat" parameterType="hashmap">
 	
@@ -112,7 +181,7 @@
 		       '' AS FRNDID,
 		       USER_NICNAME,
 		       STATUS_MSG,
-		       NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
+		       IFNULL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
 		       REG_DATE,
 		       0 AS FRND_COUNT
 		  FROM CHATUSER
@@ -146,7 +215,7 @@
 			   A.FRNDID,
 			   B.USER_NICNAME AS FRND_NICNAME,
 			   B.STATUS_MSG AS STATUS_MSG,
-			   NVL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
+			   IFNULL(MY_PROFILE_IMG_URL,'/img/ProfileImg/default_img.png') AS PROFILE_IMG,
 			   A.REG_DATE,
 			   0 AS FRND_COUNT
 		  FROM FRIENDLIST A, CHATUSER B
@@ -173,7 +242,7 @@
 							  FROM
 								   (SELECT DISTINCT ROOMID FROM USERROOM WHERE USERID=#{userid}) A,
 								   (SELECT DISTINCT ROOMID FROM USERROOM WHERE USERID=#{frndid}) B
-							 WHERE A.ROOMID = ANY(B.ROOMID)
+							 WHERE A.ROOMID = B.ROOMID
 						   ) C
 			   ) E
 		 WHERE E.CHK NOT IN(0)
@@ -271,7 +340,7 @@
 		
 		SELECT A.MY_PROFILE_IMG_URL AS PROFILE_IMG,
 			   A.USERID 
-		  FROM CHATUSER A, (SELECT distinct userid FROM userroom where roomid = #{roomid}) B
+		  FROM CHATUSER A, (SELECT distinct userid FROM USERROOM where roomid = #{roomid}) B
 		 WHERE A.USERID = B.USERID
 				 
 	</select>

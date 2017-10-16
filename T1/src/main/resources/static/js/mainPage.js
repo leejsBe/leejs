@@ -61,8 +61,35 @@ function setNotReadMsgNum(num){
 	}
 }
 
+
+var addFriendToggle = true;
+var modal;
+function addFriendbtn(){
+	
+	modal = document.getElementById('mainModal');
+	
+	if(addFriendToggle){
+		modal.style.display = "block";
+		addFriendToggle = false;
+	}else{
+		modal.style.display = "none";
+		addFriendToggle = true;
+	}
+	
+	window.onclick = function(event){
+		if(event.target == modal){
+			if(addFriendWin.closed){
+				modal.style.display = "none";
+				addFriendToggle= true;
+			}
+		}
+	}
+	
+}
+
 var q;
 var banner;
+var addFriendWin;
 $(function() {
 	
 	var tabImg1 = new Vue({
@@ -187,12 +214,37 @@ $(function() {
 		
 		if($(this).index() == 2){
 			
-			window.open("about:blank","ADDFRIEND","height=400, width=400, location=no, menubar=no, scrollbars=yes,"+
-						"resizable=no, toolbar=no, status=no, left="+(window.screenX + window.outerWidth/2  - 200)+", top="+(window.screenY + window.outerHeight/2 - 220));
+			addFriendbtn();
+			
+			
+			var f = document.createElement('form');
+			
+			/*var parm = [document.getElementById('userid').innerHTML,roominfo.USERINROOM,roominfo.ROOMID,document.getElementById('user_nicname').innerHTML];
+			
+			var objs, value;
+			for(var key in parm){
+				value = parm[key];
+				objs = document.createElement('input');
+				objs.setAttribute('type','hidden');
+				objs.setAttribute('name',key);
+				objs.setAttribute('value',value); 
+				f.appendChild(objs);
+			}*/
+			
+			f.setAttribute('method','post');
+			f.setAttribute('action','/test/mainMenuAddFriend');
+			document.body.appendChild(f);
+			
+			addFriendWin = window.open("about:blank","ADDFRIEND","height=350, width=300, location=no, menubar=no, scrollbars=yes,"+
+									"resizable=no, toolbar=no, status=no, left="+(window.screenX + window.outerWidth/2  - 200)+", top="+(window.screenY + window.outerHeight/2 - 220));
 
+			f.target = "ADDFRIEND";
+			f.submit();
+			
 			
 		}
 	})
+	
 	
 });
 

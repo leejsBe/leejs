@@ -14,7 +14,7 @@
 	</select>
 	
 	<!-- Oracle  -->
-	<!-- <select id="roomList" parameterType="hashmap" resultType="hashmap">
+	<select id="roomList" parameterType="hashmap" resultType="hashmap">
 		
 		SELECT ROOMID,
 			   LASTTIME,
@@ -56,11 +56,11 @@
 			</if>
 	  ORDER BY LASTTIME DESC
 	 
-	</select> -->
+	</select> 
 	
 	
 	<!-- MySql -->
-	<select id="roomList" parameterType="hashmap" resultType="hashmap">
+	<!-- <select id="roomList" parameterType="hashmap" resultType="hashmap">
 		
 		SELECT ROOMID,
 			   LASTTIME,
@@ -102,13 +102,13 @@
 			</if>
 	  ORDER BY LASTTIME DESC
 	 
-	</select>
+	</select> -->
 	
 	
 	
 	
 	<!-- oracle -->
-<!-- 	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
+ 	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
 		
 		
 		SELECT A.USERID as "userid",
@@ -121,11 +121,11 @@
 		 WHERE ROOMID= #{roomid} 
 	  ORDER BY REG_DATE
 	
-	</select> -->
+	</select> 
 	
 	
 	<!--MySql  -->
-	<select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
+	<!-- <select id="retrieveChat" parameterType="hashmap" resultType="hashmap">
 		
 		
 		SELECT A.USERID as "userid",
@@ -138,7 +138,7 @@
 		 WHERE ROOMID= #{roomid} 
 	  ORDER BY REG_DATE
 	
-	</select>	
+	</select> -->	
 	
 	
 	<insert id="saveChat" parameterType="hashmap">

@@ -27,7 +27,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import net.minidev.json.JSONObject;
 
 
 @Controller
@@ -221,7 +220,7 @@ public class TestController {
 		input.put("roomid",roomid);
 		input.put("userid",userid);
 		
-		///메시지 읽었다고 업데이트
+		//
 		chattingDao.chkReadUpdate(input);
 		
 		
@@ -274,12 +273,12 @@ public class TestController {
 		
 		List<HashMap<String, String>> chkRoomId = chattingDao.chkRoomId(input);
 		
-		if(chkRoomId.size()>0) { //// 서로 공통된 방 있음
+		if(chkRoomId.size()>0) { ////
 			
 			return String.valueOf(chkRoomId.get(0).get("CHK"));
 		
-		}else { //// 서로 공통된 방 없음
-			////새로 방만들기
+		}else { //// 
+			///
 			chattingDao.createRoom(input);
 			List<HashMap<String, String>> getRoomId = chattingDao.getRoomId(input);
 			
@@ -302,7 +301,7 @@ public class TestController {
 		input.put("roomid",roomid);
 		input.put("userid",userid);
 		
-		///메시지 읽었다고 업데이트
+		//
 		chattingDao.chkReadUpdate(input);
 		 
 		
@@ -315,7 +314,7 @@ public class TestController {
 		HashMap<String,String> input = new HashMap<>();
 		input.put("roomid",roomid);
 		
-		///메시지 읽었다고 업데이트
+		//
 		List<HashMap<String, String>> profileImg = chattingDao.retrieveProfileImgInRoom(input);		 
 		
 		Gson gson = new Gson();

@@ -76,7 +76,7 @@ public class ChattingDao {
 		// TODO Auto-generated method stub
 		List<HashMap<String, String>> list = this.sqlSession.selectList("chkExistData",input);
 		if( String.valueOf(list.get(0).get("COUNT")).equals("0") ) {
-			///사용자 대화방별 읽은 날짜 추가
+			///add date by user room
 			this.sqlSession.insert("insertReadData",input);
 		}else {
 			this.sqlSession.update("updateReadData",input);

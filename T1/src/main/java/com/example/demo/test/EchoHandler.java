@@ -15,7 +15,7 @@ public class EchoHandler extends TextWebSocketHandler{
 	private Logger logger = LoggerFactory.getLogger(EchoHandler.class);
 	
 	/*
-	 * ¼­¹ö¿¡ ¿¬°áÇÑ »ç¿ëÀÚµéÀ» ÀúÀåÇÏ´Â ¸®½ºÆ®
+	 * list of user who connected to the server
 	 */
 	private List<WebSocketSession> connectedUsers;
 	
@@ -25,30 +25,30 @@ public class EchoHandler extends TextWebSocketHandler{
 	}
 	
 	/*
-	 * Á¢¼Ó °ü·ÃµÈ Event Method 
+	 * connection-related Event Method 
 	 * 
 	 * @param WebSocketSession
-	 * 			Á¢¼ÓÇÑ »ç¿ëÀÚ
+	 * 	 connected users
 	 */
 	
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception{
 		connectedUsers.add(session);
 		
-		logger.info(session.getId() + "´ÔÀÌ Á¢¼Ó Çß½À´Ï´Ù.");
-		logger.info("¿¬°á IP : "+session.getRemoteAddress().getHostName());
+		logger.info(session.getId() + "ë‹˜ ì•ˆë…•í•˜ì„¸ìš”.");
+		logger.info("ì ‘ì†IP : "+session.getRemoteAddress().getHostName());
 	}
 	
 	/*
-	 * µÎ °¡Áö ÀÌº¥Æ®¸¦ Ã³¸®
+	 *
 	 * 
-	 * 1. Send : Å¬¶óÀÌ¾ğÆ®°¡ ¼­¹ö¿¡°Ô ¸Ş½ÃÁö¸¦ º¸³¿
-	 * 2. Emit : ¼­¹ö¿¡ ¿¬°áµÇ¾î ÀÖ´Â Å¬¶óÀÌ¾ğÆ®¿¡°Ô ¸Ş½ÃÁö¸¦ º¸³¿
+	 * 1. Send :
+	 * 2. Emit : 
 	 *	
 	 *	@param WebSocketSession
-	 *			¸Ş½ÃÁö¸¦ º¸³½ Å¬¶óÀÌ¾ğÆ®
+	 *			
 	 *	@param TextMessage
-	 *			¸Ş½ÃÁöÀÇ ³»¿ë
+	 *			
 	 */
 	
 	@Override
@@ -75,23 +75,23 @@ public class EchoHandler extends TextWebSocketHandler{
 		}
 		
 		/*
-		 * Payload : »ç¿ëÀÚ°¡ º¸³½ ¸Ş½ÃÁö
+		 * Payload : 
 		 */
 		
-		logger.info(session.getId() + "´ÔÀÇ ¸Ş½ÃÁö:" + message.getPayload());
+		logger.info(session.getId() + "ï¿½ï¿½ï¿½ï¿½ ï¿½Ş½ï¿½ï¿½ï¿½:" + message.getPayload());
 		
 		
 	}
 	
 	
 	/*
-	 * Å¬¶óÀÌ¾ğÆ®°¡ ¼­¹ö¿Í ¿¬°áÀ» ²÷¾úÀ»¶§ ½ÇÇàµÇ´Â ¸Ş¼Òµå
+	 * 
 	 * 
 	 * @param  WebSocketSession
-	 * 			¿¬°áÀ» ²÷Àº Å¬¶óÀÌ¾ğÆ®
+	 * 			
 	 * 
 	 * @param  CloseStatus
-	 * 			¿¬°á »óÅÂ(È®ÀÎ ÇÊ¿äÇÔ)
+	 * 			
 	 */
 	
 	@Override
@@ -99,16 +99,16 @@ public class EchoHandler extends TextWebSocketHandler{
 		connectedUsers.remove(session);
 		for(WebSocketSession webSocketSession : connectedUsers) {
 			/*
-			 * ÀÚ½ÅÀÌ º¸³½ ¸Ş½ÃÁö¸¦ ¹ŞÁö ¾Ê´Â´Ù.
+			 * 
 			 * 
 			 */
 			
 			if(!session.getId().equals(webSocketSession.getId())) {
-				webSocketSession.sendMessage(new TextMessage(session.getRemoteAddress().getHostName()+" ÅğÀåÇß½À´Ï´Ù."));
+				webSocketSession.sendMessage(new TextMessage(session.getRemoteAddress().getHostName()+" ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½."));
 			}
 		}
 		
-		logger.info(session.getId() + "´ÔÀÌ ÅğÀåÇß½À´Ï´Ù.");
+		logger.info(session.getId() + "ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 		
 	}
 	

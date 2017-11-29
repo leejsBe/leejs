@@ -1,7 +1,5 @@
 package com.example.demo.chat;
 
-import java.util.Date;
-
 import lombok.Getter;
 import lombok.Setter;
 

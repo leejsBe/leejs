@@ -4,10 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
     <typeAliases>
-        <package name="com.example.demo.test"/>
+        <package name="com.example.*"/>
     </typeAliases>
     <mappers>
         <mapper resource="mapper/chattingMapper.xml"/>
+        <mapper resource="mapper/storiesMapper.xml"/>
     </mappers>
 </configuration>
 

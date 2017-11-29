@@ -3,17 +3,11 @@ package com.example.demo.test;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
-
 @Component
-public class ChattingDao {
-	
-	@Autowired
-	private SqlSession sqlSession;
+public class ChattingDao extends SqlSessionImpl{
 	
 	
 	public List<HashMap<String, String>> chkidpwd(HashMap<String, String> chk) {
